@@ -1,6 +1,6 @@
 variable "bucket_prefix" {
   type = string
-  description = "Name of S3 Bucket"
+  description = "Prefix name of S3 Bucket"
 }
 
 variable "profile" {
@@ -25,4 +25,18 @@ variable "aws_credentials_path" {
   type = tuple([string])
   default = ["$HOME/.aws/credentials"]
   description = "AWS Credentials Path"
+}
+
+variable "AIRFLOW_TAG" {
+  type = map
+  description = "Tag for Resources used by Airflow"
+  default = {
+    Name = "Airflow_Instance"
+    App = "Airflow"
+  }
+}
+
+variable "AZ" {
+  type = string
+  description = "Availability Zone(s)"
 }

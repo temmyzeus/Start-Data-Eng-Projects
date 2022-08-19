@@ -31,30 +31,43 @@ resource "aws_s3_bucket" "S3-Bucket" {
   }
 }
 
+# resource "aws_security_group" "airflow_security_group" {
+#   name = "airflow_security_group"
+#   description = "Allow TLS inbound traffic"
+# }
+
 resource "aws_instance" "airflow_instance" {
   ami               = "ami-0d70546e43a941d70" # Ubuntu 22.04
-  instance_type     = "t2.micro"
+  instance_type     = "t2.medium"
   availability_zone = var.AZ
   tags              = var.AIRFLOW_TAG
   # security_groups = #create securty group and reference
   key_name = aws_key_pair.ec2_key_pair.id
+  # ebs_block_device {
+  #   device_name = "/dev/sdh"
+  #   delete_on_termination = false
+  #   encrypted             = false
+  #   tags                  = var.AIRFLOW_TAG
+  #   volume_size           = 8
+  #   volume_type           = "gp2"
+  # }
 }
 
-resource "aws_ebs_volume" "airflow_instance_volume" {
-  availability_zone = var.AZ
-  size              = 8
-  type              = "gp2" #general purpose ssd
-}
+# resource "aws_ebs_volume" "airflow_instance_volume" {
+#   availability_zone = var.AZ
+#   size              = 8
+#   type              = "gp2" #general purpose ssd
+# }
 
-resource "aws_volume_attachment" "airflow_ec2_ebs_attach" {
-  device_name = "/dev/sdh"
-  volume_id   = aws_ebs_volume.airflow_instance_volume.id
-  instance_id = aws_instance.airflow_instance.id
-  depends_on = [
-    aws_instance.airflow_instance,
-    aws_ebs_volume.airflow_instance_volume
-  ]
-}
+# resource "aws_volume_attachment" "airflow_ec2_ebs_attach" {
+#   device_name = "/dev/sdh"
+#   volume_id   = aws_ebs_volume.airflow_instance_volume.id
+#   instance_id = aws_instance.airflow_instance.id
+#   depends_on = [
+#     aws_instance.airflow_instance,
+#     aws_ebs_volume.airflow_instance_volume
+#   ]
+# }
 
 resource "tls_private_key" "airflow_ec2_key" {
   algorithm = "RSA"
@@ -62,8 +75,8 @@ resource "tls_private_key" "airflow_ec2_key" {
 }
 
 resource "local_sensitive_file" "rsa" {
-  filename = "../.ssh/rsa_key"
-  content   = tls_private_key.airflow_ec2_key.private_key_pem
+  filename        = "../.ssh/rsa_key"
+  content         = tls_private_key.airflow_ec2_key.private_key_pem
   file_permission = 0400
 }
 

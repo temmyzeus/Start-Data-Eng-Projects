@@ -28,9 +28,9 @@ with DAG(
 		sql="./scripts/sql/extract_user_purchases.sql",
 		postgres_conn_id="postgres_conn",
 		database="postgres",
-		parameters={
+		params={
 			"table_name": "user_purchases",
-			"user_purchases_file": "/temp/user_purchases.csv"
+			"user_purchases_file": "/var/lib/postgresql/user_purchases.csv"
 			}
 	)
 	

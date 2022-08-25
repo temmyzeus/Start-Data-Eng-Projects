@@ -48,7 +48,7 @@ x-airflow-common:
   # build: .
   environment:
     &airflow-common-env
-    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     # For backward compatibility, with Airflow <2.3
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -56,7 +56,7 @@ x-airflow-common:
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
@@ -85,6 +85,11 @@ services:
       interval: 5s
       retries: 5
     # restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: '300mb'
 
   redis:
     image: redis:latest
@@ -96,6 +101,11 @@ services:
       timeout: 30s
       retries: 50
     # restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '100mb'
 
   airflow-webserver:
     <<: *airflow-common
@@ -112,6 +122,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1gb'
 
   airflow-scheduler:
     <<: *airflow-common
@@ -126,6 +141,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: '500mb'
 
   airflow-worker:
     <<: *airflow-common
@@ -147,6 +167,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '500mb'
 
   airflow-triggerer:
     <<: *airflow-common
@@ -161,6 +186,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: '200mb'
 
   airflow-init:
     <<: *airflow-common
@@ -273,6 +303,20 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+
+  db:
+    image: postgres:13
+    container_name: 'company_db'
+    environment:
+      - POSTGRES_DB:${POSTGRES_DB}
+      - POSTGRES_USER:${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5430:5432
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+      - ./data:/home/data
+      - ./sql_scripts:/home/sql_scripts
 
 volumes:
   postgres-db-volume:

@@ -146,8 +146,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.7'
-          memory: '500mb'
+          cpus: '1'
+          memory: '700mb'
 
   airflow-worker:
     <<: *airflow-common

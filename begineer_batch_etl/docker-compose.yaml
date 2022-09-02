@@ -63,6 +63,8 @@ x-airflow-common:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
+    # - ./data:/opt/airflow/data
+    - ./temp:/opt/airflow/temp
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -305,7 +307,9 @@ services:
         condition: service_completed_successfully
 
   db:
-    image: postgres:13
+    build: 
+      context: .
+      dockerfile: Dockerfile.database
     container_name: 'company_db'
     environment:
       - POSTGRES_DB:${POSTGRES_DB}
@@ -314,9 +318,10 @@ services:
     ports:
       - 5430:5432
     volumes:
-      - ./db_data:/var/lib/postgresql/data
-      - ./data:/home/data
-      - ./sql_scripts:/home/sql_scripts
+      - ./data:/data
+      - ./temp:/temp
+      # - ./db_data:/var/lib/postgresql/data
+      - ./setup:/docker-entrypoint-initdb.d
 
 volumes:
   postgres-db-volume:

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "S3-Bucket" {
-  bucket_prefix = var.bucket_prefix
+  bucket = "${var.bucket_prefix}-${data.aws_caller_identity.caller.account_id}"
   tags = {
     project = "aws_airflow" #edit if this is later used by airflow
   }

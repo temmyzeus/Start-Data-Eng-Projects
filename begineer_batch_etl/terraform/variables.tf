@@ -1,3 +1,10 @@
+variable "aws_access_key_id" {
+  type = string
+}
+
+variable "aws_secret_access_key" {
+  type = string
+}
 variable "bucket_prefix" {
   type        = string
   description = "Prefix name of S3 Bucket"
@@ -39,6 +46,7 @@ variable "AIRFLOW_TAG" {
 variable "AZ" {
   type        = string
   description = "Availability Zone(s)"
+  default = "us-west-2"
 }
 
 variable "public_key_path" {

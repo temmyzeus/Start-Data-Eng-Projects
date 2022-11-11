@@ -1,10 +1,12 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
-  - init: sh ./save_uid.sh # runs during prebuild
-    command: echo 'start script'
+  - name: Save UUID
+    command: sh ./gitpod/save_uid.sh # runs during prebuild
+    openMode: split-left
 
   - name: "Install Terraform"
     init: sh ./gitpod/install-terraform.sh
+    openMode: split-right
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:

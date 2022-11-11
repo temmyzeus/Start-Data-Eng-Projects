@@ -7,3 +7,12 @@ tasks:
 ports:
   - port: 3000
     onOpen: open-preview
+
+vscode:
+  extensions:
+    - "Microsoft.Python"
+    - "Microsoft.Pylance"
+    - "Microsoft.Docker"
+    - "GitKraken.GitLens (Insiders)"
+    - "Microsoft.IntelliCode"
+    - "Anton Kulikov.Terraform"

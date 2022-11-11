@@ -3,6 +3,9 @@ tasks:
   - init: sh ./save_uid.sh # runs during prebuild
     command: echo 'start script'
 
+  - name: "Install Terraform"
+    init: sh ./gitpod/install-terraform.sh
+
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
   - port: 3000
@@ -15,4 +18,4 @@ vscode:
     - "Microsoft.Docker"
     - "GitKraken.GitLens (Insiders)"
     - "Microsoft.IntelliCode"
-    - "Anton Kulikov.Terraform"
+    - "4ops.Terraform"

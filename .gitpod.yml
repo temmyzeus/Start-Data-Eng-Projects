@@ -1,4 +1,7 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
+image: 
+  file: .gitpod.Dockerfile
+
 tasks:
   - name: Save UUID
     command: sh ./gitpod/save_uid.sh # runs during prebuild

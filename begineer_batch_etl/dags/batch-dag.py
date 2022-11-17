@@ -9,7 +9,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
 
-from utils import check_bucket_path_exists
+from utils import check_bucket_paths_exists
 
 BUCKET_NAME:str = Variable.get("BUCKET_NAME")
 
@@ -32,10 +32,10 @@ with DAG(
 
 	check_raw_stage_scripts = PythonOperator(
 		task_id="check_raw_stage_script",
-		python_callable=check_bucket_path_exists,
+		python_callable=check_bucket_paths_exists,
 		op_kwargs={
 			"bucket_name": BUCKET_NAME,
-			"path": "raw"
+			"paths": ["raw", "stage", "scripts"]
 		}
 	)
 

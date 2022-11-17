@@ -276,22 +276,21 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  db:
+  retail_db:
     build: 
-      context: .
+      context: ./containers/retail_db
       dockerfile: Dockerfile.database
-    container_name: 'company_db'
+    container_name: 'retail_db'
     environment:
-      - POSTGRES_DB:${POSTGRES_DB}
-      - POSTGRES_USER:${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - 5430:5432
     volumes:
-      - ./data:/data
-      - ./temp:/temp
-      # - ./db_data:/var/lib/postgresql/data
-      - ./setup:/docker-entrypoint-initdb.d
+      # - ""./temp:/temp"
+      - "./RETAIL_DB_DATA:/var/lib/postgresql/data"
+      - "./containers/retail_db/scripts:/docker-entrypoint-initdb.d/"
 
 volumes:
   postgres-db-volume:

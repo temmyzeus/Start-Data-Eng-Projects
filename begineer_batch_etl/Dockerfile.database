@@ -1,3 +1,0 @@
-FROM postgres:13
-USER root
-RUN mkdir /data /temp && chown postgres /data /temp

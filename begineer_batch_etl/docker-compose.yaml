@@ -64,7 +64,7 @@ x-airflow-common:
     - "./logs:/opt/airflow/logs"
     - "./plugins:/opt/airflow/plugins"
     # - ./data:/opt/airflow/data
-    - "./temp:/opt/airflow/temp"
+    - "airflow-retail-db:/data/database_dump"
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -291,6 +291,8 @@ services:
       # - ""./temp:/temp"
       - "./RETAIL_DB_DATA:/var/lib/postgresql/data"
       - "./containers/retail_db/scripts:/docker-entrypoint-initdb.d/"
+      - "airflow-retail-db:/data/database_dump"
 
 volumes:
   postgres-db-volume:
+  airflow-retail-db:

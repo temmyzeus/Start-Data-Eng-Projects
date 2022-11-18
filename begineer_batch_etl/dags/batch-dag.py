@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from airflow import DAG
+from airflow.providers.amazon.aws.transfers.local_to_s3 import LocalFilesystemToS3Operator
 from airflow.models import Variable
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
@@ -42,16 +43,20 @@ with DAG(
 	extract_user_purchase_data = PostgresOperator(
 		task_id="extract_user_purchase_data",
 		sql="./scripts/sql/extract_user_purchases.sql",
-		postgres_conn_id="postgres_conn",
-		database="postgres",
+		postgres_conn_id="RETAIL_DB_CONN",
 		params={
 			"table_name": "user_purchases",
-			"user_purchases_file": "/var/lib/postgresql/user_purchases.csv"
+			"user_purchases_file": "/data/database_dump/user_purchases.csv"
 			}
 	)
-	
-	# user_purchases_to_stage_data_lake = S3CopyObjectOperator(
-	# 	task_id="user_purchases_to_stage_data_lake"
-	# )
 
-	[check_raw_stage_scripts, extract_user_purchase_data]
+	user_purchase_to_stage_data_lake = LocalFilesystemToS3Operator(
+		task_id="user_purchase_to_stage_data_lake",
+		filename="/data/database_dump/user_purchases.csv",
+		dest_key="raw/user_purchases.csv",
+		dest_bucket=BUCKET_NAME,
+		aws_conn_id="AWS_CONN",
+		replace=False
+	)
+
+	[check_raw_stage_scripts, extract_user_purchase_data] >> user_purchase_to_stage_data_lake

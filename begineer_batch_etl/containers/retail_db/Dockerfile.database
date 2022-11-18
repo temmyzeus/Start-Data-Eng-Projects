@@ -1,6 +1,5 @@
 FROM postgres:13
 USER root
 RUN apt-get update -y && apt-get upgrade -y
-# RUN mkdir /data /temp && chown postgres /data /temp
-RUN mkdir /data && chown postgres /data
 RUN apt-get install wget -y && apt-get install unzip -y
+RUN mkdir /data /data/database_dump /temp && chown -R postgres:postgres /data /temp

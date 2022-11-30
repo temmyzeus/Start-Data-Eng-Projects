@@ -5,6 +5,7 @@ from airflow.providers.amazon.aws.transfers.local_to_s3 import LocalFilesystemTo
 from airflow.models import Variable
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.amazon.aws.operators.redshift_sql import RedshiftSQLOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CopyObjectOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
@@ -57,6 +58,10 @@ with DAG(
 		dest_bucket=BUCKET_NAME,
 		aws_conn_id="AWS_CONN",
 		replace=False
+	)
+
+	user_purchase_stage_data_lake_to_redshift_table = RedshiftSQLOperator(
+		task_id="user_purchase_stage_data_lake_to_redshift_table"
 	)
 
 	[check_raw_stage_scripts, extract_user_purchase_data] >> user_purchase_to_stage_data_lake

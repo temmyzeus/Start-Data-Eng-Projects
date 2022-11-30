@@ -49,7 +49,7 @@ variable "AZ" {
   default = "us-west-2"
 }
 
-variable "public_key_path" {
-  type        = string
-  description = "Path to public key"
-}
+# variable "public_key_path" {
+#   type        = string
+#   description = "Path to public key"
+# }

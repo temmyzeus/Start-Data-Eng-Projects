@@ -130,3 +130,7 @@ dmypy.json
 
 # Terraform files
 *.tfstate
+
+# Project Requirement
+begineer_batch_etl/RETAIL_DB_DATA
+begineer_batch_etl/logs

@@ -3,7 +3,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.providers.amazon.aws.transfers.local_to_s3 import LocalFilesystemToS3Operator
 from airflow.models import Variable
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.operators.redshift_sql import RedshiftSQLOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CopyObjectOperator
@@ -13,9 +13,10 @@ from airflow.utils.dates import days_ago
 
 from utils import check_bucket_paths_exists
 
-BUCKET_NAME:str = Variable.get("BUCKET_NAME")
+STAGING_BUCKET_NAME:str = Variable.get("STAGING_BUCKET_NAME")
 
 default_args = {
+	"owner": "Temiloluwa Awoyele",
 	"email": [
 		"awoyeletemiloluwa@gmail.com" #replace with airflow variable
 	],
@@ -36,7 +37,7 @@ with DAG(
 		task_id="check_raw_stage_script",
 		python_callable=check_bucket_paths_exists,
 		op_kwargs={
-			"bucket_name": BUCKET_NAME,
+			"bucket_name": STAGING_BUCKET_NAME,
 			"paths": ["raw", "stage", "scripts"]
 		}
 	)
@@ -55,13 +56,13 @@ with DAG(
 		task_id="user_purchase_to_stage_data_lake",
 		filename="/data/database_dump/user_purchases.csv",
 		dest_key="raw/user_purchases.csv",
-		dest_bucket=BUCKET_NAME,
+		dest_bucket=STAGING_BUCKET_NAME,
 		aws_conn_id="AWS_CONN",
 		replace=False
 	)
 
-	user_purchase_stage_data_lake_to_redshift_table = RedshiftSQLOperator(
-		task_id="user_purchase_stage_data_lake_to_redshift_table"
-	)
+	# user_purchase_stage_data_lake_to_redshift_table = RedshiftSQLOperator(
+	# 	task_id="user_purchase_stage_data_lake_to_redshift_table"
+	# )
 
 	[check_raw_stage_scripts, extract_user_purchase_data] >> user_purchase_to_stage_data_lake
